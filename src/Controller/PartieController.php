@@ -32,12 +32,4 @@ class PartieController extends AbstractController
     {
 
     }
-    /**
-     * @Route("/partie/{id}", name="partieid")
-     */
-    public function partie({id})
-    {
-
-    }
-
 }
