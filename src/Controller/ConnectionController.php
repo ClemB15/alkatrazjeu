@@ -23,4 +23,20 @@ class ConnectionController extends Controller
         return $this->render('Admin/index.html.twig');
     }
 
+    /**
+     * @Route("/superadmin", name="super_admin")
+     */
+    public function superadmin()
+    {
+        return $this->render('Super_admin/index.html.twig');
+    }
+
+    /**
+     * @Route("/accueil", name="accueil")
+     */
+    public function user()
+    {
+        return $this->render('Accueil/index.html.twig');
+    }
+
 }

@@ -14,10 +14,13 @@ security:
         main:
             # les urls auxquels s'appliquent ce firewall, dans ce cas, ce sont toutes les urls
             pattern: ^/
-
+            user_checker: App\Security\UserChecker # activation du UserChecker créé précédemment
+            http_basic: ~
+            provider: database_users
             # La connexion n'est pas requise sur toutes les pages
             # par exemple la page d'accueil
             anonymous: true
+            switch_user: ~
 
             form_login:
                 # Le nom de la route de la page de connexion
@@ -29,16 +32,23 @@ security:
                 # Securisation des formulaires
                 csrf_token_generator: security.csrf.token_manager
                 # La page par defaut apres une connexion reussie
-                default_target_path: admin
+                success_handler: redirect_after_login
 
             logout:
                 # La route où se trouve le process de deconnexion
                 path: security_logout
                 # La route sur laquelle doit etre rediriger l'utilisateur apres une deconnexion
                 target: index
+    role_hierarchy:
+        # un membre avec le ROLE_ADMIN aura également le ROLE_USER
+        ROLE_ADMIN: ROLE_USER
+        # Le ROLE_SUPER_ADMIN avec le ROLE_ALLOWED_TO_SWITCH qui permet de s'authentifier en se faisant passer pour n'importe quel membre. Particulièrement utile pour débugger son code.
+        ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     access_control:
     # Les regles de securité
     # Là dans ce cas seul les utilisateurs ayant le rôle ROLE_ADMIN
     # peuvent acceder à toutes les pages commençant par /admin
     - { path: '^/admin', roles: ROLE_ADMIN }
+    - { path: '^/superadmin', roles: ROLE_SUPER_ADMIN }
+    - { path: '^/accueil', roles: ROLE_USER }

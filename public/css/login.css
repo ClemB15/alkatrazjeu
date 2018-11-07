@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css?family=Cuprum');
+
+* {
+    font-family: 'Cuprum', sans-serif;
+    margin: 0 ;
+}
+
+body {
+    background: url("../images/fond-accueil.png");
+    background-size: cover;
+    color: white;
+}
+
+h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+a {
+    text-decoration: none;
+    color: white;
+}
+
+.formulaire {
+    width:100%;
+    margin: auto;
+    text-align: center;
+    top: 20%;
+    bottom: 25%;
+    position: absolute;
+}
+
+.input {
+    width: 250px;
+    height: 20px;
+    border-radius: 10px;
+    padding-left: 5px;
+    margin-bottom: 20px;
+}
+
+.connexion {
+    width: 150px;
+    font-size: 22px;
+    background-color: #23272b;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 3px #999;
+}
+
+
+.connexion:active {
+    background-color: #3e8e41;
+    box-shadow: 0 1px #666;
+    transform: translateY(4px);
+
+}
+
+.connexion:hover {
+    background-color: black;
+}
+
+.lien {
+    font-size: 19px;
+}

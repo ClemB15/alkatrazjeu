@@ -1,0 +1,291 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <style>
+        .selected {
+            border: 2px solid red;
+        }
+        .new {
+            border: 2px solid green;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/css/iziToast.min.css" />
+{% endblock %}
+
+{% block body %}
+    <h1>Partie entre {{ partie.joueur1.username }} et {{ partie.joueur2.username }}</h1>
+
+    <div id="plateau">
+        {{ render(controller(
+            'App\\Controller\\JouerController::afficherPlateau',
+            { 'partie': partie.id }
+        )) }}
+    </div>
+
+    <div id="attentejoueur" style="position:fixed; top:0; left:0; height: 100%; width: 100%; background-color: darkgray; opacity: 0.8;font-size: 60px; display:none">
+        Attente du joueur
+    </div>
+{% endblock %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/izitoast/1.4.0/js/iziToast.min.js"></script>
+    <script>
+        var actualise = false;
+        var cartesSelectedTerrain = Array();
+        var cartesSelectedChameau = Array();
+        var cartesSelectedMain = Array();
+        var cartesCham = false;
+        $(document).ready(function(){
+            setInterval(actualisePlateau, 2000);
+        })
+        function actualisePlateau() {
+            $.ajax({
+                url: "{{ path('actualise_plateau', {partie: partie.id}) }}",
+            }).done(function (etat) {
+                console.log(etat);
+                if (etat === 'touradversaire') {
+                    actualise = false;
+                    $('#attentejoueur').show();
+                }
+                if (etat === 'montour') {
+                    if (actualise === false) {
+                        console.log('reload');
+                        $('#plateau').empty().load("{{ path('afficher_plateau', {partie:partie.id}) }}");
+                        $('img').removeClass('selected');
+                        cartesSelectedTerrain = Array();
+                        cartesSelectedChameau = Array();
+                        cartesSelectedMain = Array();
+                        actualise = true;
+                        $('#attentejoueur').hide();
+                    }
+                }
+            });
+        }
+        $(document).on('click', '.cartechameau', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+                //retirer d'un tableau
+                $index = cartesSelectedChameau.indexOf($(this).data('carte'));
+                cartesSelectedChameau.splice($index, 1);
+                console.log(cartesSelectedChameau)
+            } else {
+                $(this).addClass('selected');
+                //ajouter dans un tableau
+                cartesSelectedChameau.push($(this).data('carte'));
+                console.log(cartesSelectedChameau)
+            }
+        })
+        $(document).on('click', '.cartemain', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+                //retirer d'un tableau
+                $index = cartesSelectedMain.indexOf($(this).data('carte'));
+                cartesSelectedMain.splice($index, 1);
+                console.log(cartesSelectedMain)
+            } else {
+                $(this).addClass('selected');
+                //ajouter dans un tableau
+                cartesSelectedMain.push($(this).data('carte'));
+                console.log(cartesSelectedMain)
+            }
+        })
+        $(document).on('click', '.Marchandises', function () {
+            if (($(this).hasClass('selected')) && $(this) !== '.Larbin') {
+                $(this).removeClass('selected');
+                //retirer d'un tableau
+                $index = cartesSelectedTerrain.indexOf($(this).data('carte'));
+                cartesSelectedTerrain.splice($index, 1);
+                console.log(cartesSelectedTerrain)
+            } else {
+                $(this).addClass('selected');
+                //ajouter dans un tableau
+                cartesSelectedTerrain.push($(this).data('carte'));
+                console.log(cartesSelectedTerrain)
+
+            }
+        })
+        $(document).on('click', '.Larbin', function () {
+            if ($('.Larbin').hasClass('selected')) {
+                $('.Larbin').removeClass('selected');
+                $index = cartesSelectedTerrain.indexOf($('.Larbin').data('carte'));
+                $('.Larbin').each(function(index) {
+                    console.log($(this).data('carte'));
+                    cartesSelectedTerrain.splice($index, 1);
+                    cartesCham = false;
+                })
+                //retirer d'un tableau
+                console.log(cartesSelectedTerrain);
+                console.log(cartesCham);
+            } else {
+                $('.Larbin').addClass('selected');
+                //ajouter dans un tableau
+                $('.Larbin').each(function(index) {
+                    console.log($(this).data('carte'));
+                    cartesSelectedTerrain.push($(this).data('carte'));
+                    cartesCham = true;
+                })
+                console.log(cartesSelectedTerrain);
+                console.log(cartesCham);
+            }
+        })
+
+        $(document).on('click', '#action-prendre', function () {
+
+            console.log(cartesSelectedTerrain)
+            if (cartesSelectedTerrain.length === 0) {
+                alert('Selectionnez une carte');
+            }
+            else if (cartesCham === true) {
+                    console.log('OK chameau');
+                    console.log(cartesSelectedTerrain);
+                    $.ajax({
+                        url: "{{ path('jouer_action_prendre', {partie: partie.id}) }}",
+                        data: {
+                            cartes: cartesSelectedTerrain
+                        },
+                        method: 'POST',
+                        success: function (data) {
+                            // for ($i = 0; $i < data.length; $i++) {
+                                console.log('carte' + data['cartechameau'].id);
+                                $('#bloc-action').hide();
+                                $('#bloc-suivant').show();
+                                $('#carte-' + data['cartechameau'].id).remove();
+                                var chameau = '';
+                                if (data['carteterrain'].valeur === 0) {
+                                chameau = "Larbin";
+                                }
+
+                                $('#terrain').append('<div class="col-sm-2" id="carte-' + data['carteterrain'].id + '"><img src="http://localhost:8000/cartes/' + data['carteterrain'].fichier + '" height="100px" class="carteterrain ' + chameau + ' new"  data-carte="' + data['carteterrain'].id + '" /></div>');
+                                $('#chamain').append('<img src="http://localhost:8000/cartes/' + data['cartechameau'].fichier + '" class="cartechameau new" height="100px" data-carte="' + data['cartechameau'].id + '" />');
+
+                        }
+                    })
+                }
+            else if (cartesSelectedTerrain.length > 1) {
+
+                alert('Selectionnez une seule carte');
+            }
+            else {
+                console.log('OK');
+                $.ajax({
+                    url: "{{ path('jouer_action_prendre', {partie: partie.id}) }}",
+                    data: {
+                        cartes: cartesSelectedTerrain
+                    },
+                    method: 'POST',
+                    success: function (data) {
+                        console.log('carte' + data['cartemain'].id);
+                        $('#bloc-action').hide();
+                        $('#bloc-suivant').show();
+                        $('#carte-' + data['cartemain'].id).remove();
+                        var chameau = '';
+                        if (data['carteterrain'].valeur === 0) {
+                            chameau = "Larbin";
+                        }
+                        $('#terrain').append('<div class="col-sm-2" id="carte-' + data['carteterrain'].id + '"><img src="http://localhost:8000/cartes/' + data['carteterrain'].fichier + '" height="100px" class="carteterrain ' + chameau + ' new"  data-carte="' + data['carteterrain'].id + '" /></div>');
+                        $('#main').append('<img src="http://localhost:8000/cartes/' + data['cartemain'].fichier + '" class="cartemain new" height="100px" data-carte="'+data['cartemain'].id+'" />');
+                    },
+                    error: function (data) {
+                        if (data === 'erreur7') {
+                            alert('Vous avez déjà 7 cartes en main. Vous ne pouvez pas jouer cette action.');
+                        } else {
+                            alert('erreur action prendre');
+                        }
+                    }
+                })
+            }
+        })
+
+        $(document).on('click', '#action-vendre', function () {
+            // Envoi des cartes en Main
+                $.ajax({
+                    url: "{{ path('jouer_action_vendre', {partie: partie.id}) }}",
+                    data: {
+                        main: cartesSelectedMain
+                    },
+                    method: 'POST',
+                    success: function (data) {
+                        $('#bloc-action').hide('2000');
+                        $('#bloc-suivant').show();
+                        var i;
+                        for (i = 0; i < cartesSelectedMain.length; ++i) {
+                            // do something with `substr[i]`
+                            $('.carteMain_' + cartesSelectedMain[i]).hide('20000');
+                            $('#terrain').append('<img style="margin-right: 25px;" src="http://localhost:8000/cartes/' + data[
+                                'cartemain'].fichier + '" class="cartemain new" height="70px" data-carte="' + data[
+                                'cartemain'].id + '" />').show('200');
+                            iziToast.success({
+                                title: 'Succès',
+                                message: 'Vous avez vendu la carte  ' + cartesSelectedMain[i],
+                            });
+                        }
+                    },
+                })
+            })
+        $(document).on('click', '#action-troquer', function () {
+            // Envoi des cartes en Main
+                $.ajax({
+                    url: "{{ path('jouer_action_troc', {partie: partie.id}) }}",
+                    data: {
+                        main: cartesSelectedMain,
+                        chameaux_main: cartesSelectedChameau,
+                        terrain: cartesSelectedTerrain
+                    },
+                    method: 'POST',
+                    success: function (data) {
+                        $('#bloc-action').hide('2000');
+                        $('#bloc-suivant').show();
+                        var i;
+                        if (cartesSelectedMain.length === cartesSelectedTerrain.length && TrocChameau !== true) {
+                            for (i = 0; i < cartesSelectedMain.length; ++i) {
+                                // do something with `substr[i]`
+                                $('.carteMain_' + cartesSelectedMain[i]).hide('20000');
+                                $('#terrain').append('<img style="margin-right: 25px;" src="http://localhost:8000/cartes/' + data[
+                                    'cartemain'].fichier + '" class="cartemain new" height="70px" data-carte="' + data[
+                                    'cartemain'].id + '" />').show('200');
+                            }
+                            for (i = 0; i < cartesSelectedTerrain.length; ++i) {
+                                // do something with `substr[i]`
+                                $('.terrain_' + cartesSelectedTerrain[i]).hide('20000');
+                                $('#main').append('<img style="margin-right: 25px;" src="http://localhost:8000/cartes/' + data[
+                                    'carteterrain'].fichier + '" class="carteterrain new" height="70px" data-carte="' + data[
+                                    'carteterrain'].id + '" />').show('200');
+                            }
+                            iziToast.success({
+                                title: 'Succès',
+                                message: 'Vous avez troqué ',
+                            });
+                        } else {
+                            iziToast.error({
+                                title: 'Erreur',
+                                message: 'Selectionnez la meme quantité de cartes ',
+                            });
+                        }
+                    },
+                    error: function (data) {
+
+                        if (data === 'ERREUR_NB7') {
+                            iziToast.error({
+                                title: 'Erreur',
+                                message: 'Vous ne pouvez pas avoir plus de 7 cartes ',
+                            });
+                        }
+                    }
+                })
+            })
+
+
+        $(document).on('click', '#action-terminer', function () {
+            $.ajax({
+                url: "{{ path('jouer_action_suivant', {partie: partie.id}) }}",
+                method: 'POST',
+            });
+            location.reload();
+        });
+    </script>
+{% endblock %}
+

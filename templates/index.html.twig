@@ -1,8 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    <a href="{{ path('security_login')}}"> Connexion</a>
-
-
+{% block header %}
+    <header>
+    <nav class="zonenav">
+        <ul>
+            <li><a href="{{ path('security_login')}}" class="navi"> JOUER</a></li>
+        </ul>
+    </nav>
+    <img src="{{ asset('images/logo.png') }}" alt="logo" class="logo">
+    </header>
 {% endblock %}
+{% block body %}
+<div class="regles">
+    <h1>RÈGLES</h1>
+    <p>Les règles du jeu</p>
+</div>
+{% endblock %}
+{% block footer %}{% include 'footer.html.twig' %}{% endblock %}
 

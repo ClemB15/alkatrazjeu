@@ -1,6 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-    Bienvenue {{ app.user.username }} !
+    {% block title %}Administration{% endblock %}
+
+    {% block body %}
+        Bienvenue {{ app.user.username }} !
+        <ul>
+            <li><a href="{{ path('user_index') }}">Joueurs</a></li>
+            <li><a href="{{ path('carte_index') }}">Cartes</a></li>
+            <li><a href="{{ path('jeton_index') }}">Jetons</a></li>
+            <li><a href="">Parties</a></li>
+        </ul>
+    {% endblock %}
+
+
 
 {% endblock %}

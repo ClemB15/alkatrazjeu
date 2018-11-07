@@ -1,0 +1,17 @@
+{# resetting/index.html.twig #}
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<div class="formulaire">
+    <img src="{{ asset('images/logo.png') }}">
+    <h2>Renouvellement du mot de passe</h2>
+    {{form_start(form)}}
+    {{ form_widget (form.password.first,{ 'attr': { 'placeholder': 'Mot de passe', 'class': 'input'}}) }}<br>
+    {{ form_widget (form.password.second,{ 'attr': { 'placeholder': 'Répéter le mot de passe', 'class': 'input'}}) }}
+    <button class="connexion"  type="submit">Envoyer</button>
+    {{form_end(form)}}
+</div>
+{% endblock %}
+

@@ -1,0 +1,17 @@
+{# resetting/request.html.twig #}
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<div class="formulaire">
+    <img src="{{ asset('images/logo.png') }}">
+<h2>Mot de passe oublié ?</h2>
+<p>Demandez à réinitialiser votre mot de passe en renseignant votre mail.</p>
+
+{{form_start(form)}}
+    {{form_row(form.email)}}
+<button  class="connexion" type="submit">Envoyer</button>
+{{form_end(form)}}
+</div>
+{% endblock %}

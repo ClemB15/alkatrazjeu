@@ -1,0 +1,15 @@
+{% block header %}
+    <header>
+        <nav class="zonenav">
+            <ul>
+                <li><a href="" class="navi"> TOURNOIS</a></li>
+                <li><a href="" class="navi"> FORUM</a></li>
+            <li><a href="{{ path('partie_creer') }}" class="navi"> JOUER</a></li>
+                <li><a href="" class="navi"> CLASSEMENT</a></li>
+            <li><a href="" class="navi"> PROFIL</a></li>
+            </ul>
+        </nav>
+        <img src="{{ asset('images/logo.png') }}" alt="logo" class="logo">
+    </header>
+
+{% endblock %}

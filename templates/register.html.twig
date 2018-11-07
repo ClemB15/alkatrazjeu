@@ -1,11 +1,23 @@
 {# templates/register.html.twig #}
-
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+    <div class="formulaire">
+    <img src="{{ asset('images/logo.png') }}" rel="stylesheet">
+    <h2>ENREGISTREZ VOUS</h2>
 {{ form_start(form) }}
     {{ form_row(form.fullName) }}
     {{ form_row(form.username) }}
     {{ form_row(form.email) }}
-    {{ form_row(form.password.first) }}
-    {{ form_row(form.password.second) }}
+    {{ form_widget (form.password.first,{ 'attr': { 'placeholder': 'Mot de passe', 'class': 'input'}}) }}<br>
+    {{ form_widget (form.password.second,{ 'attr': { 'placeholder': 'Répéter le mot de passe', 'class': 'input'}}) }}
 
-<button type="submit">S'inscrire !</button>
+    <br>
+<button type="submit" class="connexion">S'inscrire !</button>
 {{ form_end(form) }}
+<br>
+    <a href="{{ path('security_login') }}" class="lien"> Déjà un compte ?</a>
+    <br>
+{% endblock %}
