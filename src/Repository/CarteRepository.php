@@ -28,6 +28,22 @@ class CarteRepository extends ServiceEntityRepository
             ->getResult(Query::HYDRATE_ARRAY);
 
     }
+    /**
+     * @return Carte[] Returns an array of Carte objects
+     */
+
+    public function RecupValeurCarte($value)
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.valeur = :val')
+            ->setParameter('val', $value)
+            ->orderBy('c.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 
 //    /**
 //     * @return Carte[] Returns an array of Carte objects

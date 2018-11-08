@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @UniqueEntity(fields="email", message="Email déjà pris")
  * @UniqueEntity(fields="username", message="Username déjà pris")
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
      * @var int
@@ -81,6 +81,15 @@ class User implements UserInterface, \Serializable
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $games_played;
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $games_won;
 
     public function __construct()
     {
@@ -249,5 +258,25 @@ class User implements UserInterface, \Serializable
     public function getPlainPassword()
     {
     }
+
+    public function getGamesPlayed(): ?int
+    {
+        return $this->games_played;
+    }
+    public function setGamesPlayed(?int $games_played): self
+    {
+        $this->games_played = $games_played;
+        return $this;
+    }
+    public function getGamesWon(): ?int
+    {
+        return $this->games_won;
+    }
+    public function setGamesWon(?int $games_won): self
+    {
+        $this->games_won = $games_won;
+        return $this;
+    }
+
 
 }

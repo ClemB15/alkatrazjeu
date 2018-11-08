@@ -2,27 +2,42 @@
 
 {% block body %}
 
-    <form action="{{ path('partie_creer') }}" method="post">
+    <div>
         <div>
-            <label>Joueur 1</label>
-            <select name="joueur1">
-                {% for joueur in joueurs %}
-                    <option value="{{ joueur.id }}">{{ joueur.username }}</option>
-                {% endfor %}
-            </select>
+            <h2>Invitations</h2>
+            {% for partie in invparties %}
+                <br>
+
+
+                <a href="{{ path('afficher_partie', {'partie': partie.id}) }}" target="_blank">Partie  {{ partie.id }}</a>
+
+
+            {% endfor %}
         </div>
-        <div>
-            <label>Joueur 2</label>
-            <select name="joueur2">
-                {% for joueur in joueurs %}
-                    <option value="{{ joueur.id }}">{{ joueur.username }}</option>
-                {% endfor %}
-            </select>
+    </div>
+    <div class="col-12">
+        <div style="height: 212px;">
+            <h2>Créer une partie</h2>
+            <div>
+                <div>
+                    <p>Choisissez votre adversaire :</p>
+                    <form action="{{ path('partie_creer') }}" method="post">
+
+                        <select name="joueur2">
+                            {% for joueur in joueurs %}
+                                <option value="{{ joueur.id }}">{{ joueur.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <br><br>
+
+
+                        <input type="submit" value="Créer Partie">
+
+                    </form>
+                </div>
+            </div>
         </div>
-        <div>
-            <input type="submit" value="Créer Partie">
-        </div>
-    </form>
+    </div>
 {% endblock %}
 
 {% block title %}

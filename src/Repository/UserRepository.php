@@ -35,4 +35,16 @@ class UserRepository extends ServiceEntityRepository
         } catch (NonUniqueResultException $e) {
         }
     }
+
+    /**
+     * @return User[] Returns an array of User objects
+     */
+    public function findClassement()
+    {
+        return $this->createQueryBuilder('u')
+            ->orderBy('u.games_played - u.games_won', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }
